@@ -109,10 +109,10 @@ jobs:
           command: | 
             cd frontend
             npm install
-            # npm install oauth-sign@^0.9.0
-            npm audit --audit-level=critical
-            # Do not use the --force option along with the command below in your local
-            npm audit fix --audit-level=critical 
+            npm audit fix --audit-level=critical --force
+            npm update minimist --depth 4
+            npm update loader-utils --depth 2
+            npm audit --audit-level=critica
 
   scan-backend:
     docker:
@@ -124,12 +124,12 @@ jobs:
       - run:
           name: back-end build
           command: | 
-           cd backend
+            cd backend
             npm install
-            # npm install oauth-sign@^0.9.0
-            npm audit --audit-level=critical 
-            # Do not use the --force option along with the command below in your local
-            npm audit fix --audit-level=critical 
+            npm audit fix --force --audit-level=critical 
+            npm audit fix --force --audit-level=critical
+            npm audit --audit-level=critical
+             
 #   deploy-infrastructure:
 #     docker:
 #       # Docker image here that supports AWS CLI
