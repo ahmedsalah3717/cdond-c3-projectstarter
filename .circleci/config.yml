@@ -39,7 +39,8 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-build]
+          keys:
+            - frontend-deps-{{ checksum "frontend/package-lock.json" }}
       - run:
           name: Build front-end
           command: |
@@ -48,7 +49,7 @@ jobs:
             npm run build
       - save_cache:
           paths: [frontend/node_modules]
-          key: frontend-build
+          key: backend-deps-{{ checksum "frontend/package-lock.json" }}     
 
   build-backend:
     docker:
@@ -56,7 +57,8 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-build]
+          keys:
+            - backend-deps-{{ checksum "backend/package-lock.json" }}
       - run:
           name: Back-end build
           command: |
@@ -65,22 +67,20 @@ jobs:
             npm run build
       - save_cache:
           paths: [backend/node_modules]
-          key: backend-build
-
+          key: backend-deps-{{ checksum "backend/package-lock.json" }}      
   test-frontend:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-build]
+          keys:
+            - frontend-deps-{{ checksum "frontend/package-lock.json" }}
       - run:
-          name: front-end build
           command: | 
             cd frontend
             npm install
-            npm run test         
-
+            npm run test
                 
   test-backend:
     docker:
@@ -88,15 +88,14 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-build]
+          keys:
+            - backend-deps-{{ checksum "backend/package-lock.json" }}
       - run:
-          name: back-end build
           command: | 
             cd backend
             npm install
-            npm run test 
-                      
-            
+            npm run test
+
   scan-frontend:
     docker:
       - image: cimg/node:13.8.0
@@ -106,15 +105,19 @@ jobs:
           keys:
             - frontend-deps-{{ checksum "frontend/package-lock.json" }}
       - run:
-          name: Install dependencies
           command: |
             cd frontend
             npm install
       - run:
-          name: Scan frontend packages
           command: |
             cd frontend
+            npm audit fix --audit-level=critical --force
+            npm update minimist --depth 4
+            npm update loader-utils --depth 2
             npm audit --audit-level=critical
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: backend-deps-{{ checksum "frontend/package-lock.json" }}     
 
   scan-backend:
     docker:
@@ -125,16 +128,20 @@ jobs:
           keys:
             - backend-deps-{{ checksum "backend/package-lock.json" }}
       - run:
-          name: Install dependencies
           command: |
             cd backend
             npm install
       - run:
-          name: Scan backend packages
           command: |
             cd backend
-            npm audit --audit-level=critical
-             
+            npm install
+            npm audit fix --force --audit-level=critical 
+            npm audit fix --force --audit-level=critical
+            npm audit --audit-level=critical    
+     
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-deps-{{ checksum "backend/package-lock.json" }}           
 #   deploy-infrastructure:
 #     docker:
 #       # Docker image here that supports AWS CLI
@@ -314,24 +321,24 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
-#       - deploy-infrastructure:
-#           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-#           filters:
-#             branches:
-#               only: [test-feature-branch]
-#       - configure-infrastructure:
-#           requires: [deploy-infrastructure]
-#       - run-migrations:
-#           requires: [configure-infrastructure]
-#       - deploy-frontend:
-#           requires: [run-migrations]
-#       - deploy-backend:
-#           requires: [run-migrations]
-#       - smoke-test:
-#           requires: [deploy-backend, deploy-frontend]
-#       - cloudfront-update:
-#           requires: [smoke-test]
-#       - cleanup:
-#           requires: [cloudfront-update]
+      # - deploy-infrastructure:
+      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      #     filters:
+      #       branches:
+      #         only: [test-feature-branch]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
+      # - deploy-frontend:
+      #     requires: [run-migrations]
+      # - deploy-backend:
+      #     requires: [run-migrations]
+      # - smoke-test:
+      #     requires: [deploy-backend, deploy-frontend]
+      # - cloudfront-update:
+      #     requires: [smoke-test]
+      # - cleanup:
+      #     requires: [cloudfront-update]
 
-# # VS Code Extension Version: 1.5.1
+# VS Code Extension Version: 1.5.1
