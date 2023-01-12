@@ -10,16 +10,34 @@ commands:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
+
+            
   install_ansible:
-      description: Install Ansible
+      description: Install python
       steps:
         - run:
-            name: Install Ansible
-            command: |
+            name: Install python
+            # command: |
+            #   sudo apt update
+            #   sudo apt install software-porperties-common
+            #   sudo add-apt-repository --yes --update ppa:ansible/ansible
+            #   sudo apt install ansible
+            #           name: install python3
+            command: | 
               sudo apt update
-              sudo apt install software-porperties-common
-              sudo add-apt-repository --yes --update ppa:ansible/ansible
-              sudo apt install ansible
+              sudo apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget
+              cd /tmp
+              wget https://www.python.org/ftp/python/3.7.5/Python-3.7.5.tgz
+              tar -xf Python-3.8.3.tgz
+              cd python-3.8.3
+              ./configure --enable-optimizations  
+        - run:
+            name: install_ansible
+            command: |
+              python3 -m pip install --user ansible
+
+
+
 
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
