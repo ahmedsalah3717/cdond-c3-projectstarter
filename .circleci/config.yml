@@ -251,7 +251,7 @@ jobs:
 #             # Your code here
 #             exit 1
 #      # Here's where you will add some code to rollback on failure      
-      - destroy-environment 
+      # - destroy-environment 
 #   deploy-frontend:
 #     docker:
 #       # Docker image here that supports AWS CLI
@@ -272,7 +272,7 @@ jobs:
 #           command: |
 #             # your code here
 #       # Here's where you will add some code to rollback on failure      
-      - destroy-environment                     
+      # - destroy-environment                     
 #   deploy-backend:
 #     docker:
 #       # Docker image here that supports Ansible
@@ -289,7 +289,7 @@ jobs:
 #           command: |
 #             # your code here
 #       # Here's where you will add some code to rollback on failure  
-      - destroy-environment 
+      # - destroy-environment 
 #   smoke-test:
 #     docker:
 #       # Lightweight Docker image 
@@ -312,7 +312,7 @@ jobs:
 #           command: |
 #             # your code here
 #       # Here's where you will add some code to rollback on failure  
-      - destroy-environment 
+      # - destroy-environment 
 #   cloudfront-update:
 #     docker:
 #       # Docker image here that supports AWS CLI
@@ -327,7 +327,7 @@ jobs:
 #           command: |
 #             # your code here
 #       # Here's where you will add some code to rollback on failure  
-      - destroy-environment 
+      # - destroy-environment 
 # cleanup:
 #     docker:
 #       # Docker image here
