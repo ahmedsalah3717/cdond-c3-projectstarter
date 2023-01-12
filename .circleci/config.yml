@@ -175,7 +175,7 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-deps-{{ checksum "backend/package-lock.json" }}  
-  
+
   deploy-infrastructure:
     docker:
       - image: cimg/base:stable 
@@ -245,7 +245,6 @@ jobs:
 
     steps:
       - checkout
-      - install_awscli      
       - run:
           name: Run migrations
           command: |
