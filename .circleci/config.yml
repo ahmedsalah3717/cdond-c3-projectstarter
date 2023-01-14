@@ -390,7 +390,8 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            URL="http://udapeople-/$%7BCIRCLE_WORKFLOW_ID:0:7%7D.s3-website-us-east-1.amazonaws.com/#/employees"
+            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"
+            # http://udapeople-6f996d7.s3-website-us-east-1.amazonaws.com/#/employees
 
             echo ${URL} 
 
