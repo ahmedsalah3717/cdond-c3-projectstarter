@@ -405,7 +405,7 @@ jobs:
       - destroy-environment
       - revert-migrations  
 
-cloudfront-update:
+  cloudfront-update:
     docker:
       - image: cimg/base:stable 
     steps:
@@ -426,10 +426,7 @@ cloudfront-update:
       - run:
           name: Update cloudfront distribution
           command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/cloudfront.yml \
-              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \ 
-              --stack-name udapeople-cloudfront 
+            aws cloudformation deploy   --template-file .circleci/files/cloudfront.yml   --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" --stack-name udapeople-cloudfront
 
       # Here's where you will add some code to rollback on failure
       - destroy-environment
