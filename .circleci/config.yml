@@ -166,7 +166,7 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: backend-deps-{{ checksum "frontend/package-lock.json" }}     
-#s
+
   scan-backend:
     docker:
       - image: cimg/node:13.8.0
