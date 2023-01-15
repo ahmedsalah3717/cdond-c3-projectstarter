@@ -1,2 +1,5 @@
 URL01:"https://github.com/ahmedsalah3717/cdond-c3-projectstarter"
-URL02:"http://udapeople-6f996d7.s3-website-us-east-1.amazonaws.com"
+URL02:"http://udapeople-2e42e7e.s3-website-us-east-1.amazonaws.com"
+URL03:"https://d2j19m3qrl8q92.cloudfront.net"
+URL04:"ec2-52-55-197-68.compute-1.amazonaws.com"
+URL05:"ec2-54-159-193-24.compute-1.amazonaws.com"
