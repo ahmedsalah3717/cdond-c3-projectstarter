@@ -2,6 +2,7 @@ version: 2.1
 # rds username = postgres
 # rds password = vqq5ALRvpfHAnQsg8gSe
 # random string = 314wasju
+
 commands:
 
   install_nodejs:
@@ -241,7 +242,7 @@ jobs:
       - install_awscli
       - install_ansible
       - add_ssh_keys:
-          fingerprints: ["bf:12:20:51:a8:5f:03:1c:f4:4b:a9:72:11:b6:82:d7"]
+          fingerprints: ["d6:43:1b:fe:49:a7:05:3c:13:f4:3c:66:cb:8a:db:85"]
       - attach_workspace:
           at: ~/
       - run:
@@ -376,7 +377,7 @@ jobs:
           command: |
             BACKEND_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --query 'Reservations[].Instances[].PublicIpAddress' \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
 
             export API_URL="http://${BACKEND_IP}:3030"
@@ -390,9 +391,8 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"
-            # http://udapeople-6f996d7.s3-website-us-east-1.amazonaws.com/#/employees
-
+            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"            
+            
             echo ${URL} 
 
             if curl -s ${URL} | grep "Welcome"
@@ -401,9 +401,9 @@ jobs:
             else
               exit 1
             fi
-      # Here's where you will add some code to rollback on failure
+      # Here's where you will add some code to rollback on failure  
       - destroy-environment
-      - revert-migrations  
+      - revert-migrations
 
   cloudfront-update:
     docker:
@@ -415,21 +415,23 @@ jobs:
       - run:
           name: save old workflow id 
           command: |
+            # Fetch the Old workflow ID
               export OldWorkflowID=$(aws cloudformation \
                       list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
                       --no-paginate --output text)
               echo " OldWorkflowID: $OldWorkflowID "
               echo " CIRCLE_WORKFLOW_ID : $CIRCLE_WORKFLOW_ID:0:7"
-              # Fetch the stack names
+              # Fetch the stack names          
               curl https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d $OldWorkflowID
       - run:
           name: Update cloudfront distribution
           command: |
-            aws cloudformation deploy   --template-file .circleci/files/cloudfront.yml   --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" --stack-name udapeople-cloudfront
 
-      # Here's where you will add some code to rollback on failure
+            aws cloudformation deploy   --template-file .circleci/files/cloudfront.yml   --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" --stack-name InitialStack
+             
+      # Here's where you will add some code to rollback on failure  
       - destroy-environment
-      - revert-migrations 
+      - revert-migrations
 
   cleanup:
     docker:
@@ -453,10 +455,9 @@ jobs:
             then
                 aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
                 aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
-                aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+                aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"            
             fi
-              
-
+            
 workflows:
   default:
     jobs:
